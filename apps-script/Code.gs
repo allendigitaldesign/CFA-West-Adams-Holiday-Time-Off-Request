@@ -1,12 +1,15 @@
 /*
  * Backend for the holiday time-off page. Lives inside the Google Sheet
  * (Extensions > Apps Script) next to Rules.gs, which is a copy of rules.js.
+ * It can also be a standalone project at script.google.com: then set SHEET_ID
+ * to the ID in the Sheet's address (docs.google.com/spreadsheets/d/<ID>/edit).
  *
  * Every request becomes one row on the "Requests" tab. Leaders approve or deny
  * by changing the Status column. A person can have only one request that is
  * Pending or Approved; if theirs is Denied they may submit a new one.
  */
 
+var SHEET_ID = '';
 var SHEET_NAME = 'Requests';
 var HEADERS = ['Submitted', 'First Name', 'Last Name', 'Pod', 'Holiday', 'Dates', 'Status', 'Leader Notes'];
 var COL = { submitted: 1, first: 2, last: 3, pod: 4, holiday: 5, dates: 6, status: 7, notes: 8 };
@@ -93,7 +96,7 @@ function readRows_(sheet) {
 
 // Creates and formats the Requests tab the first time it's needed.
 function getSheet_() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var ss = SHEET_ID ? SpreadsheetApp.openById(SHEET_ID) : SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SHEET_NAME);
   if (sheet) return sheet;
 
