@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>West Adams Holiday Time Off</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+  /* Layout: one narrow column, a form that reads top to bottom like a paper request slip. */
+  :root {
+    --bg: #faf7f6;
+    --surface: #ffffff;
+    --ink: #221a19;
+    --muted: #6d6260;
+    --line: #e6dedc;
+    --accent: #c8102e;
+    --accent-ink: #ffffff;
+    --accent-soft: #fbe7ea;
+    --ok: #1d7a46;
+    --ok-soft: #e4f4ea;
+    --warn: #9a5a00;
+    --warn-soft: #fff3dc;
+    --err: #b3261e;
+    --err-soft: #fdecea;
+    --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --radius: 12px;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #171312;
+      --surface: #221c1b;
+      --ink: #f4eeed;
+      --muted: #b3a7a5;
+      --line: #3a3130;
+      --accent: #ff5468;
+      --accent-ink: #1a0c0e;
+      --accent-soft: #3d1a20;
+      --ok: #6fd69a;
+      --ok-soft: #173325;
+      --warn: #f1b75a;
+      --warn-soft: #3a2a10;
+      --err: #ff8a80;
+      --err-soft: #3d1c1a;
+      color-scheme: dark;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 17px/1.5 var(--font-body);
+    padding: max(24px, env(safe-area-inset-top)) 16px max(40px, env(safe-area-inset-bottom));
+  }
+  .wrap { max-width: 560px; margin: 0 auto; display: grid; gap: 20px; }
+
+  header { display: grid; gap: 8px; }
+  .eyebrow {
+    font: 600 13px/1 var(--font-display);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    margin: 0;
+    font: 800 clamp(28px, 7vw, 38px)/1.08 var(--font-display);
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+  .rules { margin: 4px 0 0; padding-left: 20px; color: var(--muted); display: grid; gap: 2px; }
+
+  .banner {
+    background: var(--warn-soft);
+    color: var(--warn);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    font-size: 15px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: grid;
+    gap: 22px;
+  }
+
+  fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
+  legend, .label {
+    font: 600 15px/1.2 var(--font-display);
+    padding: 0;
+    margin-bottom: 10px;
+  }
+  .step { color: var(--muted); font-weight: 600; margin-right: 6px; }
+  .hint { margin: -4px 0 0; color: var(--muted); font-size: 15px; }
+
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 400px) { .two { grid-template-columns: 1fr; } }
+  .field { display: grid; gap: 4px; min-width: 0; }
+  .field span { font-size: 14px; color: var(--muted); }
+
+  input[type="text"], select {
+    width: 100%;
+    font: inherit;
+    color: var(--ink);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 12px;
+    min-height: 48px;
+  }
+  input[type="text"]:focus, select:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+
+  /* Holiday choice */
+  .holidays { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  @media (max-width: 420px) { .holidays { grid-template-columns: 1fr; } }
+  .holiday input { position: absolute; opacity: 0; pointer-events: none; }
+  .holiday label {
+    display: grid;
+    gap: 2px;
+    padding: 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+    cursor: pointer;
+    min-height: 64px;
+  }
+  .holiday strong { font: 600 16px/1.2 var(--font-display); }
+  .holiday small { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .holiday input:checked + label { border-color: var(--accent); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--accent); }
+  .holiday input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Day chips */
+  .days { display: flex; flex-wrap: wrap; gap: 8px; }
+  .day {
+    font: inherit;
+    display: grid;
+    justify-items: center;
+    gap: 0;
+    min-width: 72px;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg);
+    color: var(--ink);
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+  }
+  .day b { font: 600 13px/1.2 var(--font-display); letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+  .day span { font-size: 18px; font-weight: 700; }
+  .day[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .day[aria-pressed="true"] b { color: var(--accent-ink); }
+  .day:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .day:disabled { cursor: not-allowed; opacity: 0.55; }
+  .day.closed { border-style: dashed; background: transparent; opacity: 1; }
+  .day.closed span { font-size: 14px; font-weight: 700; color: var(--muted); }
+  .empty { color: var(--muted); font-size: 15px; margin: 0; }
+
+  .note { margin: 0; font-size: 15px; color: var(--warn); min-height: 1.5em; }
+
+  .submit {
+    font: 700 17px/1 var(--font-display);
+    background: var(--accent);
+    color: var(--accent-ink);
+    border: 0;
+    border-radius: 999px;
+    padding: 16px 20px;
+    min-height: 52px;
+    cursor: pointer;
+    width: 100%;
+  }
+  .submit:disabled { opacity: 0.6; cursor: progress; }
+  .submit:focus-visible, .link:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
+  .link {
+    font: 600 15px/1 var(--font-body);
+    background: none;
+    border: 0;
+    padding: 8px 0;
+    color: var(--accent);
+    text-decoration: underline;
+    cursor: pointer;
+    justify-self: start;
+  }
+
+  .alert { margin: 0; padding: 12px 14px; border-radius: 10px; background: var(--err-soft); color: var(--err); font-size: 15px; }
+
+  .done { display: grid; gap: 14px; }
+  .done h2 { margin: 0; font: 800 26px/1.15 var(--font-display); }
+  .slip { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; }
+  .slip dt { color: var(--muted); font-size: 15px; }
+  .slip dd { margin: 0; font-weight: 700; min-width: 0; }
+  .pill {
+    display: inline-block;
+    justify-self: start;
+    font: 600 13px/1 var(--font-display);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: var(--warn-soft);
+    color: var(--warn);
+  }
+  .pill.approved { background: var(--ok-soft); color: var(--ok); }
+  .pill.denied { background: var(--err-soft); color: var(--err); }
+
+  details.status { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 20px; }
+  details.status summary { font: 600 16px/1.3 var(--font-display); cursor: pointer; }
+  details.status[open] summary { margin-bottom: 14px; }
+  .status-form { display: grid; gap: 12px; }
+  .status-results { display: grid; gap: 10px; }
+  .status-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
+
+  footer { color: var(--muted); font-size: 13px; text-align: center; }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .day, .holiday label, .submit { transition: background-color .15s, border-color .15s, color .15s; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <div class="eyebrow">West Adams · Holiday Season 2026</div>
+    <h1>Request holiday time off</h1>
+    <ul class="rules">
+      <li>Pick one holiday.</li>
+      <li>Ask for 1 or 2 days. Two days must be back to back.</li>
+      <li>We're closed Thanksgiving Day and Christmas Day, so you don't need to request them.</li>
+    </ul>
+  </header>
+
+  <div class="banner" id="setupBanner" hidden>
+    Practice mode: this page isn't connected to the Google Sheet yet, so requests won't be saved. Follow the setup steps in the README.
+  </div>
+
+  <form class="card" id="requestForm" novalidate>
+    <fieldset>
+      <legend><span class="step">1</span>Your name</legend>
+      <div class="two">
+        <label class="field"><span>First name</span>
+          <input type="text" id="first" name="first" autocomplete="given-name" maxlength="40" required>
+        </label>
+        <label class="field"><span>Last name</span>
+          <input type="text" id="last" name="last" autocomplete="family-name" maxlength="40" required>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="step">2</span>Your pod</legend>
+      <select id="pod" name="pod" required>
+        <option value="">Choose your pod</option>
+      </select>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="step">3</span>Holiday</legend>
+      <div class="holidays" id="holidays"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend><span class="step">4</span>Days off</legend>
+      <p class="hint" id="dayHint">Tap 1 or 2 days that are next to each other.</p>
+      <div class="days" id="days"><p class="empty">Choose a holiday to see its days.</p></div>
+      <p class="note" id="dayNote" aria-live="polite"></p>
+    </fieldset>
+
+    <p class="alert" id="formError" role="alert" hidden></p>
+    <button class="submit" type="submit" id="submitBtn">Send request</button>
+  </form>
+
+  <section class="card done" id="doneCard" hidden aria-live="polite">
+    <span class="pill" id="donePill">Pending</span>
+    <h2 id="doneTitle">Request sent</h2>
+    <dl class="slip">
+      <dt>Name</dt><dd id="doneName"></dd>
+      <dt>Pod</dt><dd id="donePod"></dd>
+      <dt>Holiday</dt><dd id="doneHoliday"></dd>
+      <dt>Days off</dt><dd id="doneDates"></dd>
+    </dl>
+    <p class="hint" id="doneText">A leader will review your request. Check back here for your status.</p>
+    <button class="link" type="button" id="againBtn">Submit for someone else</button>
+  </section>
+
+  <details class="status" id="statusBox">
+    <summary>Check my request status</summary>
+    <form class="status-form" id="statusForm" novalidate>
+      <div class="two">
+        <label class="field"><span>First name</span>
+          <input type="text" id="statusFirst" autocomplete="given-name" maxlength="40">
+        </label>
+        <label class="field"><span>Last name</span>
+          <input type="text" id="statusLast" autocomplete="family-name" maxlength="40">
+        </label>
+      </div>
+      <button class="submit" type="submit" id="statusBtn">Check status</button>
+      <div class="status-results" id="statusResults" aria-live="polite"></div>
+    </form>
+  </details>
+
+  <footer>Questions? Ask a leader.</footer>
+</main>
+
+<script src="rules.js"></script>
+<script src="config.js"></script>
+<script>
+(function () {
+  var SCRIPT_URL = ((window.APP_CONFIG && window.APP_CONFIG.scriptUrl) || '').trim();
+  var connected = /^https:\/\/script\.google\.com\//.test(SCRIPT_URL);
+
+  var $ = function (id) { return document.getElementById(id); };
+  var form = $('requestForm');
+  var state = { holiday: null, dates: [] };
+
+  if (!connected) $('setupBanner').hidden = false;
+
+  // Today in the store's local time (from the device), as YYYY-MM-DD.
+  function todayIso() {
+    var d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  // Pod dropdown
+  POD_GROUPS.forEach(function (group) {
+    var og = document.createElement('optgroup');
+    og.label = group.label;
+    group.pods.forEach(function (pod) {
+      var o = document.createElement('option');
+      o.value = pod;
+      o.textContent = pod;
+      og.appendChild(o);
+    });
+    $('pod').appendChild(og);
+  });
+
+  // Holiday cards
+  HOLIDAYS.forEach(function (h) {
+    var open = h.days.filter(function (d) { return !d.closed; });
+    var range = shortDate(open[0].date) + ' – ' + shortDate(open[open.length - 1].date);
+    var past = open.every(function (d) { return d.date < todayIso(); });
+
+    var wrap = document.createElement('div');
+    wrap.className = 'holiday';
+    wrap.innerHTML =
+      '<input type="radio" name="holiday" id="h-' + h.id + '" value="' + h.id + '"' + (past ? ' disabled' : '') + '>' +
+      '<label for="h-' + h.id + '"><strong></strong><small></small></label>';
+    wrap.querySelector('strong').textContent = h.name;
+    wrap.querySelector('small').textContent = past ? 'Dates have passed' : range;
+    wrap.querySelector('input').addEventListener('change', function () {
+      state.holiday = h.id;
+      state.dates = [];
+      $('dayNote').textContent = '';
+      renderDays();
+    });
+    $('holidays').appendChild(wrap);
+  });
+
+  function shortDate(iso) { return formatDay(iso).split(' ')[1]; }
+
+  function renderDays() {
+    var box = $('days');
+    box.innerHTML = '';
+    var h = findHoliday(state.holiday);
+    if (!h) {
+      box.innerHTML = '<p class="empty">Choose a holiday to see its days.</p>';
+      return;
+    }
+    var today = todayIso();
+    h.days.forEach(function (d) {
+      var parts = formatDay(d.date).split(' ');
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'day' + (d.closed ? ' closed' : '');
+      btn.innerHTML = '<b></b><span></span>';
+      btn.querySelector('b').textContent = parts[0];
+      btn.querySelector('span').textContent = d.closed ? 'Closed' : parts[1];
+      if (d.closed) {
+        btn.disabled = true;
+        btn.setAttribute('aria-label', formatDay(d.date) + ', store closed');
+      } else {
+        btn.disabled = d.date < today;
+        btn.setAttribute('aria-pressed', state.dates.indexOf(d.date) > -1 ? 'true' : 'false');
+        btn.setAttribute('aria-label', formatDay(d.date) + (btn.disabled ? ', already passed' : ''));
+        btn.addEventListener('click', function () { toggleDay(d.date); });
+      }
+      box.appendChild(btn);
+    });
+  }
+
+  function toggleDay(date) {
+    var dates = state.dates.slice();
+    var i = dates.indexOf(date);
+    if (i > -1) {
+      dates.splice(i, 1);
+      $('dayNote').textContent = '';
+    } else {
+      dates.push(date);
+      dates.sort();
+      var check = validateRequest({ first: 'A', last: 'B', pod: allPods()[0], holiday: state.holiday, dates: dates }, todayIso());
+      if (!check.ok) {
+        // Start over from the day they just tapped and explain why.
+        $('dayNote').textContent = dates.length > MAX_DAYS
+          ? 'You can take up to ' + MAX_DAYS + ' days. Starting over from ' + formatDay(date) + '.'
+          : check.error + ' Starting over from ' + formatDay(date) + '.';
+        dates = [date];
+      } else {
+        $('dayNote').textContent = '';
+      }
+    }
+    state.dates = dates;
+    renderDays();
+  }
+
+  function showError(msg) {
+    $('formError').textContent = msg;
+    $('formError').hidden = !msg;
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    showError('');
+    var payload = {
+      first: $('first').value,
+      last: $('last').value,
+      pod: $('pod').value,
+      holiday: state.holiday,
+      dates: state.dates
+    };
+    var check = validateRequest(payload, todayIso());
+    if (!check.ok) { showError(check.error); return; }
+
+    if (!connected) { showDone(check.request, true); return; }
+
+    var btn = $('submitBtn');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res.ok) showDone(res.request, false);
+        else showError(res.error || 'Something went wrong. Try again.');
+      })
+      .catch(function () {
+        showError('Your request could not be sent. Check your connection and try again.');
+      })
+      .then(function () {
+        btn.disabled = false;
+        btn.textContent = 'Send request';
+      });
+  });
+
+  function showDone(req, practice) {
+    $('doneName').textContent = req.first + ' ' + req.last;
+    $('donePod').textContent = req.pod;
+    $('doneHoliday').textContent = req.holidayName;
+    $('doneDates').textContent = req.dates.map(formatDay).join(' + ');
+    $('doneTitle').textContent = practice ? 'Looks good (not saved)' : 'Request sent';
+    $('donePill').textContent = practice ? 'Practice' : 'Pending';
+    $('doneText').textContent = practice
+      ? 'This page isn’t connected to the Google Sheet yet, so nothing was saved.'
+      : 'A leader will review your request. Check back here for your status.';
+    form.hidden = true;
+    $('doneCard').hidden = false;
+    $('doneCard').scrollIntoView({ block: 'start' });
+  }
+
+  $('againBtn').addEventListener('click', function () {
+    form.reset();
+    state = { holiday: null, dates: [] };
+    $('dayNote').textContent = '';
+    renderDays();
+    showError('');
+    $('doneCard').hidden = true;
+    form.hidden = false;
+    $('first').focus();
+  });
+
+  // Status lookup
+  $('statusForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var out = $('statusResults');
+    var first = cleanName($('statusFirst').value);
+    var last = cleanName($('statusLast').value);
+    out.innerHTML = '';
+    if (!first || !last) { out.appendChild(msg('Enter your first and last name.')); return; }
+    if (!connected) { out.appendChild(msg('Status checks work once the page is connected to the Google Sheet.')); return; }
+
+    var btn = $('statusBtn');
+    btn.disabled = true;
+    btn.textContent = 'Checking…';
+    var url = SCRIPT_URL + '?action=status&first=' + encodeURIComponent(first) + '&last=' + encodeURIComponent(last);
+    fetch(url)
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (!res.ok) { out.appendChild(msg(res.error || 'Something went wrong. Try again.')); return; }
+        if (!res.requests.length) { out.appendChild(msg('No request found for ' + first + ' ' + last + '. Check the spelling matches what you submitted.')); return; }
+        res.requests.forEach(function (r) {
+          var row = document.createElement('div');
+          row.className = 'status-row';
+          var left = document.createElement('div');
+          left.innerHTML = '<strong></strong><div class="hint"></div>';
+          left.querySelector('strong').textContent = r.holiday + ' · ' + r.dates;
+          left.querySelector('.hint').textContent = r.pod + ' · sent ' + r.submitted;
+          var pill = document.createElement('span');
+          var s = (r.status || 'Pending').toLowerCase();
+          pill.className = 'pill' + (s === 'approved' ? ' approved' : s === 'denied' ? ' denied' : '');
+          pill.textContent = r.status || 'Pending';
+          row.appendChild(left);
+          row.appendChild(pill);
+          out.appendChild(row);
+        });
+      })
+      .catch(function () { out.appendChild(msg('Could not check status. Check your connection and try again.')); })
+      .then(function () { btn.disabled = false; btn.textContent = 'Check status'; });
+
+    function msg(text) { var p = document.createElement('p'); p.className = 'hint'; p.textContent = text; return p; }
+  });
+})();
+</script>
+</body>
+</html>
