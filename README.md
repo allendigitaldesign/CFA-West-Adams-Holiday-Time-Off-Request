@@ -40,6 +40,7 @@ Use Data > Create a filter to sort or filter by pod or holiday.
 4. Click **+** next to Files > **Script**, name it `Rules`, and paste in the contents of [`rules.js`](rules.js).
 5. Click the save icon. In the function dropdown at the top choose **setup** and click **Run**.
    Google asks you to authorize the script; allow it. This creates the **Requests** tab.
+   If Google says "This app isn't verified", click **Advanced**, then **Go to (project name)**.
 6. Click **Deploy > New deployment**. Click the gear icon, choose **Web app**, then set:
    - Execute as: **Me**
    - Who has access: **Anyone**
@@ -47,6 +48,12 @@ Use Data > Create a filter to sort or filter by pod or holiday.
 
 "Anyone" means anyone with the link can submit the form, without a Google account.
 The Sheet itself stays private to you.
+
+If Extensions > Apps Script shows "page not found", you are probably signed into more than
+one Google account. Either open the Sheet in a private/incognito window signed into only the
+Sheet owner's account, or create the script at [script.google.com](https://script.google.com)
+(New project) and set `SHEET_ID` at the top of `Code.gs` to the ID from the Sheet's address
+(`docs.google.com/spreadsheets/d/<ID>/edit`). The Apps Script editor needs a computer.
 
 ### 2. Connect the page to the Sheet
 
